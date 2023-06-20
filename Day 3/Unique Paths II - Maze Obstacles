@@ -1,0 +1,79 @@
+int mod = (int)(1e9+7);
+int solve(vector<vector<int>>& mat, int n, int m, int i, int j, vector<vector<int>>& dp){
+    
+    if(i == n || j == m){
+        return 0;
+    }
+
+    if(mat[i][j] == -1){
+        return 0;
+    }
+
+    if(i == n-1 && j == m-1){
+        return 1;
+    }
+
+    if(dp[i][j] != -1){
+        return dp[i][j];
+    }
+
+    int rightAns = solve(mat,n,m,i+1,j,dp);
+    int downAns = solve(mat,n,m,i,j+1,dp);
+    int ans = (rightAns + downAns) % mod;
+    dp[i][j] = ans;
+    return ans;
+}
+
+int solveTab(int n, int m, vector<vector<int>>& mat){
+
+    vector<vector<int>> dp(n, vector<int>(m, 0));
+    
+    for(int i = n-1; i >= 0; i--){
+        for(int j = m-1; j >= 0; j--){
+            if(mat[i][j] == -1){
+                dp[i][j] = 0;
+            }
+            else if(i == n-1 && j == m-1){
+                dp[i][j] = 1;
+            }
+            else{
+                int rightAns = 0, downAns = 0;
+                if(i+1 < n) rightAns = dp[i+1][j];
+                if(j+1 < m) downAns = dp[i][j+1];
+                int ans = (rightAns + downAns) % mod;
+                dp[i][j] = ans;
+            }
+        }
+    }
+    return dp[0][0];
+}
+
+int solveSO(int n, int m, vector<vector<int>>& mat){
+    vector<int> temp(m, 0);
+    for(int i = n-1; i >= 0; i--){
+        vector<int> curr(m, 0);
+        for(int j = m-1; j >= 0; j--){
+            if(mat[i][j] == -1){
+                curr[j] = 0;
+            }
+            else if(i == n-1 && j == m-1){
+                curr[j] = 1;
+            }
+            else{
+                int rightAns = 0, downAns = 0;
+                if(i+1 < n) rightAns = temp[j];
+                if(j+1 < m) downAns = curr[j+1];
+                int ans = (rightAns + downAns) % mod;
+                curr[j] = ans;
+            }
+        }
+        temp = curr;
+    }
+    return temp[0];
+}
+
+int mazeObstacles(int n, int m, vector< vector< int> > &mat) {
+    vector<vector<int>> dp(n, vector<int>(m, -1));
+    int ans = solveSO(n,m,mat) ;
+    return ans;
+}
