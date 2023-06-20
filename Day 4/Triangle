@@ -1,0 +1,61 @@
+#include <bits/stdc++.h> 
+
+int solve(vector<vector<int>>& triangle, int n, int i, int j, vector<vector<int>>& dp){
+	
+	if(i == n-1){
+		return triangle[i][j];
+	}
+	if(dp[i][j] != -1){
+		return dp[i][j];
+	}
+
+	int downAns = triangle[i][j] + solve(triangle,n,i+1,j,dp);
+	int diagonalAns = triangle[i][j] + solve(triangle,n,i+1,j+1,dp);
+
+	return dp[i][j] = min(downAns, diagonalAns); 
+}
+
+int solveTab(vector<vector<int>>& triangle, int n){
+	vector<vector<int>> dp(n, vector<int>(n, 0));
+	for(int j = 0; j <= n-1; j++){
+		dp[n-1][j] = triangle[n-1][j];
+	}
+
+	for(int i = n-2; i >= 0; i--){
+		for(int j = i; j >= 0; j--){
+			int diagonalAns = 0;
+			int downAns = triangle[i][j] + dp[i+1][j];
+			if(j+1 != n)
+				diagonalAns = triangle[i][j] + dp[i+1][j+1];
+			dp[i][j] = min(downAns, diagonalAns); 
+		}
+	}
+	return dp[0][0];
+}
+
+int solveSO(vector<vector<int>>& triangle, int n){
+	vector<int> temp(n, 0);
+	for(int j = 0; j < n; j++){
+		temp[j] = triangle[n-1][j];
+	}
+
+	for(int i = n-2; i >= 0; i--){
+		vector<int> curr(n, 0);
+		for(int j = i; j >= 0; j--){
+			int diagonalAns = 0;
+			int downAns = triangle[i][j] + temp[j];
+			if(j+1 != n)
+				diagonalAns = triangle[i][j] + temp[j+1];
+			curr[j] = min(downAns, diagonalAns); 
+		}
+		temp = curr;
+	}
+	return temp[0];
+}
+
+int minimumPathSum(vector<vector<int>>& triangle, int n){
+	
+	// vector<vector<int>> dp(n, vector<int>(n, -1));
+	int ans = solveSO(triangle,n);
+	return ans;
+}
