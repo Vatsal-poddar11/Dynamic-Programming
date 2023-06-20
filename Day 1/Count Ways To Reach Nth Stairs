@@ -1,0 +1,67 @@
+#include <bits/stdc++.h> 
+// Recursion
+int solve(int n){
+    if(n == 0){
+        return 1;
+    }
+    if(n < 0){
+        return 0;
+    }
+
+    int option1 = solve(n-1);
+    int option2 = solve(n-2);
+
+    return option1 + option2;
+}
+
+//Memoization
+int solveMem(int n, vector<int>& dp){
+    int mod = 1000000007;
+    if(n == 0){
+        return 1;
+    }
+    if(n < 0){
+        return 0;
+    }
+    if(dp[n] != -1){
+        return dp[n];
+    }
+
+    int ans = (solveMem(n-1, dp) + solveMem(n-2, dp)) % mod;
+
+    dp[n] = ans;
+    return ans;
+}
+//Tabulation
+int solveTab(int N){
+    int mod = 1000000007;
+    vector<int> dp(N+1,0);
+    dp[0] = 1;
+
+    for(int n = 1; n <= N; n++){
+        int ans = (dp[n-1] + dp[n-2]) % mod;
+        dp[n] = ans;
+    }
+    return dp[N];
+}
+// Space Optimization
+int solveSO(int N){
+    int mod = 1000000007;
+    int prev1 = 1;
+    int prev2 = 0;
+    int curr;
+
+    for(int n = 1; n <= N; n++){
+        curr = (prev1 + prev2) % mod;
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+}
+
+int countDistinctWays(int nStairs) {
+    //  Write your code here.
+    //vector<int> dp(nStairs+1,-1);
+    return solveSO(nStairs);
+    
+}
