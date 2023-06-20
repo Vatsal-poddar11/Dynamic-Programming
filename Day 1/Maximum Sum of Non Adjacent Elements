@@ -1,0 +1,87 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int solve(vector<int> arr, int index, vector<int>& dp){
+    // base case
+    if(index >= arr.size()){
+        return 0;
+    }
+
+    if(dp[index] != -1){
+        return dp[index];
+    }
+
+    // include
+    int include = arr[index] + solve(arr, index + 2, dp);
+
+    // exclude
+    int exclude = solve(arr, index + 1, dp);
+
+    int ans = max(include, exclude);
+
+    dp[index] = ans;
+    return ans;
+}
+
+int solveTab(vector<int> arr){
+    
+    vector<int> dp(arr.size()+2, 0);
+
+    // dp[arr.size()] = 0;      As array already initialised with 0
+
+    int n = arr.size();
+    for(int index = n - 1; index >= 0; index--){
+        
+        int include = arr[index] + dp[index + 2];
+        int exclude = dp[index + 1];
+
+        int ans = max(include, exclude);
+        dp[index] = ans;
+    }
+
+    return dp[0];
+}
+
+int solveSO(vector<int> arr){
+    
+    int next1 = 0;
+    int next2 = 0;
+    int curr;
+
+    int n = arr.size();
+    for(int index = n - 1; index >= 0; index--){
+        
+        int include = arr[index] + next2;
+        int exclude = next1;
+
+        int ans = max(include, exclude);
+        curr = ans;
+
+        // After each iteration
+        next2 = next1;
+        next1 = curr;
+    }
+
+    return curr;
+}
+
+int main(){
+    vector<int> arr;
+    arr.push_back(2);
+    arr.push_back(1);
+    arr.push_back(4);
+    arr.push_back(9);
+
+    vector<int> dp(arr.size(), -1);
+
+    int index = 0;
+
+    //int ans = solve(arr,index,dp);
+
+    //int ans = solveTab(arr);
+
+    int ans = solveSO(arr);
+
+    cout << "Answer is : " << ans << endl;
+}
